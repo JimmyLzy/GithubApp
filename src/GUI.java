@@ -1,17 +1,16 @@
-import javax.jws.soap.SOAPBinding;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.List;
+
 
 /**
  * Created by JimmyLiu on 29/01/2017.
  */
 public class GUI extends JFrame {
 
+    private JTextField userText;
+    private JPasswordField passwordText;
 
     public GUI(String title) {
         super(title);
@@ -26,7 +25,7 @@ public class GUI extends JFrame {
         panel.add(userLabel);
 
 
-        JTextField userText = new JTextField(20);
+        userText = new JTextField(20);
         userText.setBounds(100, 10, 160, 25);
         panel.add(userText);
 
@@ -34,7 +33,7 @@ public class GUI extends JFrame {
         passwordLabel.setBounds(10, 40, 80, 25);
         panel.add(passwordLabel);
 
-        JPasswordField passwordText = new JPasswordField(20);
+        passwordText = new JPasswordField(20);
         passwordText.setBounds(100, 40, 160, 25);
         panel.add(passwordText);
 
@@ -45,12 +44,7 @@ public class GUI extends JFrame {
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 if (key == KeyEvent.VK_ENTER) {
-                    String username = userText.getText();
-                    String password = String.valueOf(passwordText.getPassword());
-                    Connector connector = new Connector(username, password);
-                    connector.connect();
-                    String favLanguage = connector.getFavLanguage();
-                    UserProfileWindow(favLanguage);
+                    setUpConnection();
                 }
 
                 super.keyPressed(e);
@@ -59,20 +53,45 @@ public class GUI extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                String username = userText.getText();
-                String password = String.valueOf(passwordText.getPassword());
-                Connector connector = new Connector(username, password);
-                connector.connect();
-                String favLanguage = connector.getFavLanguage();
-                UserProfileWindow(favLanguage);
+                setUpConnection();
             }
         });
         panel.add(loginButton);
 
     }
 
-    private void UserProfileWindow(String favLanguage) {
+
+
+    public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame jFrame = new GUI("GithubApp");
+                jFrame.setSize(300, 150);
+                jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                jFrame.setVisible(true);
+            }
+        });
+
+
+    }
+
+    private void setUpConnection() {
+        String username = userText.getText();
+        String password = String.valueOf(passwordText.getPassword());
+        Connector connector = new Connector(username, password);
+        connector.connect();
+        if(connector.isConnected()) {
+            List<String> favLanguages = connector.getFavLanguages();
+            UserProfileWindow(favLanguages);
+        } else {
+            userText.setText("");
+            passwordText.setText("");
+        }
+    }
+
+    private void UserProfileWindow(List<String> favLanguages) {
 
         this.setVisible(false);
         this.dispose();
@@ -94,7 +113,11 @@ public class GUI extends JFrame {
         JTextField text = new JTextField(50);
         text.setBounds(100, 50, 160, 25);
         panel.add(text);
-        text.setText(favLanguage);
+        String languages = "";
+        for(String favLanguage: favLanguages) {
+            languages += favLanguage + " ";
+        }
+        text.setText(languages + " ");
     }
 
     private void setFrameToCenter(JFrame jFrame) {

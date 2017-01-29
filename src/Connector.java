@@ -3,8 +3,10 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by JimmyLiu on 29/01/2017.
@@ -13,7 +15,8 @@ public class Connector {
 
     private final String username;
     private final String password;
-    private String favLanguage = "";
+    private List<String> favLanguages = new ArrayList<>();
+    private boolean ifConnected = false;
 
     public Connector(String username, String password) {
 
@@ -25,6 +28,7 @@ public class Connector {
     public void connect() {
         GitHubClient client = new GitHubClient();
         client.setCredentials(username, password);
+        ifConnected = true;
         RepositoryService service = new RepositoryService();
         computeFavLanguage(service);
     }
@@ -36,12 +40,14 @@ public class Connector {
             for (Repository repo : service.getRepositories(username)) {
                 String language = repo.getLanguage();
                 System.out.println(repo.getName() + " Language: " + language);
-                if(hashMap.containsKey(language)) {
-                    LanguageCounter counter = hashMap.get(language);
-                    counter.increaseCount();
-                } else {
-                    LanguageCounter counter = new LanguageCounter(language, 1);
-                    hashMap.put(language, counter);
+                if(language != null) {
+                    if (hashMap.containsKey(language)) {
+                        LanguageCounter counter = hashMap.get(language);
+                        counter.increaseCount();
+                    } else {
+                        LanguageCounter counter = new LanguageCounter(language, 1);
+                        hashMap.put(language, counter);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -55,15 +61,25 @@ public class Connector {
             LanguageCounter counter = (LanguageCounter) pair.getValue();
             String language = (String) pair.getKey();
             if(counter.getCount() > biggestCount) {
-                favLanguage = language;
+                favLanguages.clear();
+                favLanguages.add(language);
                 biggestCount = counter.getCount();
+            } else if(counter.getCount() == biggestCount){
+                favLanguages.add(language);
             }
             it.remove(); // avoids a ConcurrentModificationException
         }
-        System.out.println(favLanguage);
+
+        for(String s: favLanguages) {
+            System.out.println(s);
+        }
     }
 
-    public String getFavLanguage() {
-        return favLanguage;
+    public List<String> getFavLanguages() {
+        return favLanguages;
+    }
+
+    public boolean isConnected() {
+        return ifConnected;
     }
 }
