@@ -26,7 +26,9 @@ public class Connector {
 
 
     /* Use the username to connect the github repositories and compute the favourite language(s).
-     * This method also set the ifConnected to be true once connected to github. */
+     * This method also set the ifConnected to be true once connected to github.
+     * However, this method does not handle the requestException when user enter not existing
+     * username and password. In addition, the connection does not check the user password. */
     public void connect() {
         GitHubClient client = new GitHubClient();
         client.setCredentials(username, password);
