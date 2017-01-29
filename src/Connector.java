@@ -25,14 +25,20 @@ public class Connector {
     }
 
 
+    /* Use the username to connect the github repositories and compute the favourite language(s).
+     * This method also set the ifConnected to be true once connected to github. */
     public void connect() {
         GitHubClient client = new GitHubClient();
         client.setCredentials(username, password);
-        ifConnected = true;
         RepositoryService service = new RepositoryService();
+        ifConnected = true;
         computeFavLanguage(service);
     }
 
+
+    /* Loop through each repository and find the most often used language in each repository.
+    * Then store the string language and a language counter in the hashMap.
+    * Finally loop through the hashMap to obtain the language(s) with the biggest count. */
     private void computeFavLanguage(RepositoryService service) {
         HashMap<String, LanguageCounter> hashMap = new HashMap<>();
 

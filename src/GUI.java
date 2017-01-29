@@ -77,6 +77,7 @@ public class GUI extends JFrame {
 
     }
 
+    /* Use the username and password from the textfields of login window to set up connections to github. */
     private void setUpConnection() {
         String username = userText.getText();
         String password = String.valueOf(passwordText.getPassword());
@@ -91,6 +92,8 @@ public class GUI extends JFrame {
         }
     }
 
+    /* Create new user profile window to show up the user's favourite language(s)
+    *  after closing the login window. */
     private void UserProfileWindow(List<String> favLanguages) {
 
         this.setVisible(false);
