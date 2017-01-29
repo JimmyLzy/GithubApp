@@ -2,6 +2,10 @@ import javax.jws.soap.SOAPBinding;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by JimmyLiu on 29/01/2017.
@@ -35,7 +39,7 @@ public class GUI extends JFrame {
         panel.add(passwordText);
 
         JButton loginButton = new JButton("login");
-        loginButton.setBounds(10, 80, 80, 25);
+        loginButton.setBounds(100, 80, 80, 25);
         passwordText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -66,16 +70,13 @@ public class GUI extends JFrame {
         });
         panel.add(loginButton);
 
-        JButton registerButton = new JButton("register");
-        registerButton.setBounds(180, 80, 80, 25);
-        panel.add(registerButton);
     }
 
     private void UserProfileWindow(String favLanguage) {
 
         this.setVisible(false);
         this.dispose();
-        
+
         JFrame jFrame = new JFrame("User profile");
         jFrame.setSize(300, 150);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

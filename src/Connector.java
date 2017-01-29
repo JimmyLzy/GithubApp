@@ -5,7 +5,6 @@ import org.eclipse.egit.github.core.service.RepositoryService;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Scanner;
 
 /**
  * Created by JimmyLiu on 29/01/2017.
@@ -24,15 +23,6 @@ public class Connector {
 
 
     public void connect() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Please enter GitHub Username: ");
-//        if(scanner.hasNext()) {
-//            username = scanner.next();
-//        }
-//        System.out.println("Please enter password: ");
-//        if(scanner.hasNext()) {
-//            password = scanner.next();
-//        }
         GitHubClient client = new GitHubClient();
         client.setCredentials(username, password);
         RepositoryService service = new RepositoryService();
