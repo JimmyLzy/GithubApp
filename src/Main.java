@@ -3,6 +3,8 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -25,17 +27,47 @@ public class Main {
         }
         GitHubClient client = new GitHubClient();
         client.setCredentials(username, password);
+
         RepositoryService service = new RepositoryService();
+        computeFavLanguage(username, service);
+
+    }
+
+    private static void computeFavLanguage(String username, RepositoryService service) {
+        HashMap<String, LanguageCounter> hashMap = new HashMap<>();
+
         try {
             for (Repository repo : service.getRepositories(username)) {
-                System.out.println(repo.getName() + " Language: " + repo.getLanguage());
+                String language = repo.getLanguage();
+                System.out.println(repo.getName() + " Language: " + language);
+                if(hashMap.containsKey(language)) {
+                    LanguageCounter counter = hashMap.get(language);
+                    counter.increaseCount();
+                } else {
+                    LanguageCounter counter = new LanguageCounter(language, 1);
+                    hashMap.put(language, counter);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        int biggestCount = 0;
+        String favLanguage = "";
+        Iterator it = hashMap.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry)it.next();
+            LanguageCounter counter = (LanguageCounter) pair.getValue();
+            String language = (String) pair.getKey();
+            if(counter.getCount() > biggestCount) {
+                favLanguage = language;
+                biggestCount = counter.getCount();
+            }
+            System.out.println(language + " = " + counter.getCount());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        System.out.println(favLanguage + " = " + biggestCount);
     }
-
 
 
 }
